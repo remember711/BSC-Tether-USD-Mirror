@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSC Tether USD Mirror | Experimental Cross-Chain Asset Mirroring</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #1a252f;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray: #95a5a6;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: rgba(26, 37, 47, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary);
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--secondary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--light), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .hero-pattern {
+            position: absolute;
+            top: 50px;
+            right: -100px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .token-card {
+            position: absolute;
+            top: 100px;
+            right: 100px;
+            background: rgba(26, 37, 47, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            width: 350px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        
+        .token-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .token-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .token-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .token-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .detail-item {
+            margin-bottom: 15px;
+        }
+        
+        .detail-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            word-break: break-all;
+        }
+        
+        .contract-link {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .contract-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Sections */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 70px;
+            height: 4px;
+            background: linear-gradient(to right, var(--secondary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin-bottom: 50px;
+        }
+        
+        /* Notice Section */
+        .notice {
+            background: rgba(39, 174, 96, 0.1);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .notice-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--success);
+        }
+        
+        .notice-content {
+            line-height: 1.8;
+        }
+        
+        .liquidity-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .liquidity-card {
+            background: rgba(26, 37, 47, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            min-width: 200px;
+            margin: 10px;
+        }
+        
+        .liquidity-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--success);
+        }
+        
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: rgba(26, 37, 47, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        /* Documentation */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .doc-card {
+            background: rgba(26, 37, 47, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .doc-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        
+        .doc-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        
+        .doc-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .doc-link {
+            margin-top: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .doc-link:hover {
+            gap: 12px;
+        }
+        
+        /* Research Group */
+        .research-group {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+            border-radius: 20px;
+            padding: 50px;
+            margin-top: 50px;
+        }
+        
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #0088cc;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+        
+        .telegram-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(10, 15, 20, 0.9);
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .footer-link {
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-link:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .token-card {
+                position: relative;
+                top: 0;
+                right: 0;
+                width: 100%;
+                margin-top: 50px;
+            }
+            
+            .hero {
+                text-align: center;
+            }
+            
+            .hero-content {
+                margin: 0 auto;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-pattern {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">$</div>
+                <div class="logo-text">BSC Tether Mirror</div>
+            </div>
+            
+            <nav class="nav-links">
+                <a href="#about" class="nav-link">About</a>
+                <a href="#token" class="nav-link">Token Details</a>
+                <a href="#liquidity" class="nav-link">Liquidity</a>
+                <a href="#research" class="nav-link">Research Group</a>
+                <a href="#contract" class="nav-link">Contract</a>
+            </nav>
+            
+            <a href="https://bscscan.com/token/0x6b1557a31aa645897ed8d1f9217b6d1f493dc890" class="btn btn-primary" target="_blank">
+                <i class="fas fa-chart-line"></i> View on BscScan
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container" style="display: flex; flex-wrap: wrap;">
+            <div class="hero-content">
+                <h1 class="hero-title">Hybrid Liquidity USDT Mirror</h1>
+                <p class="hero-subtitle">
+                    An innovative token protocol combining synthetic mechanisms with real liquidity pools on Binance Smart Chain.
+                </p>
+                
+                <div class="hero-buttons">
+                    <a href="#liquidity" class="btn btn-primary">
+                        <i class="fas fa-coins"></i> Liquidity Details
+                    </a>
+                    <a href="https://github.com/remember711/BSC-Tether-USD-Mirror-" class="btn" style="background: rgba(255,255,255,0.1); color: white;">
+                        <i class="fab fa-github"></i> GitHub Repository
+                    </a>
+                </div>
+            </div>
+            
+            <div class="token-card">
+                <div class="token-card-header">
+                    <div class="token-icon">$</div>
+                    <div class="token-name">Tether USD (USDT)</div>
+                </div>
+                
+                <div class="token-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Symbol</div>
+                        <div class="detail-value">USDT</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Decimals</div>
+                        <div class="detail-value">18</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Total Supply</div>
+                        <div class="detail-value">1,000,000,000</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Blockchain</div>
+                        <div class="detail-value">BSC (BEP-20)</div>
+                    </div>
+                    
+                    <div class="detail-item" style="grid-column: span 2;">
+                        <div class="detail-label">Contract Address</div>
+                        <div class="detail-value">
+                            <a href="https://bscscan.com/address/0x6b1557a31aa645897ed8d1f9217b6d1f493dc890" class="contract-link" target="_blank">
+                                0x6b1557a31aa645897ed8d1f9217b6d1f493dc890
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item" style="grid-column: span 2;">
+                        <div class="detail-label">Synthetic Liquidity</div>
+                        <div class="detail-value">850,000,000 USDT</div>
+                    </div>
+                    
+                    <div class="detail-item" style="grid-column: span 2;">
+                        <div class="detail-label">Real Liquidity</div>
+                        <div class="detail-value">Adjustable</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-pattern"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">Project Overview</h2>
+            <p class="section-subtitle">
+                Advanced token protocol with dual liquidity mechanisms for stable value representation.
+            </p>
+            
+            <div class="notice">
+                <h3 class="notice-title">
+                    <i class="fas fa-info-circle"></i> Hybrid Liquidity Protocol
+                </h3>
+                <div class="notice-content">
+                    <p>This token protocol combines synthetic liquidity mechanisms with real asset backing.</p>
+                    <p>The token value is stabilized through a combination of algorithmic controls and real liquidity pools.</p>
+                    <p>Token holders benefit from both stability mechanisms and potential value appreciation.</p>
+                </div>
+                
+                <div class="liquidity-info">
+                    <div class="liquidity-card">
+                        <div>Synthetic Liquidity</div>
+                        <div class="liquidity-value">850M USDT</div>
+                        <div>Algorithmic stabilization</div>
+                    </div>
+                    
+                    <div class="liquidity-card">
+                        <div>Real Liquidity</div>
+                        <div class="liquidity-value">Adjustable</div>
+                        <div>Backed by actual assets</div>
+                    </div>
+                    
+                    <div class="liquidity-card">
+                        <div>Total Value</div>
+                        <div class="liquidity-value">$1B+</div>
+                        <div>Combined liquidity</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Hybrid Liquidity</h3>
+                    <p>Combines synthetic mechanisms with real asset backing for enhanced stability and value preservation.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Value Stability</h3>
+                    <p>Advanced algorithms maintain peg stability while allowing for potential appreciation through real liquidity.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock-open"></i>
+                    </div>
+                    <h3 class="feature-title">Transparent Protocol</h3>
+                    <p>Fully open-source implementation with verifiable liquidity mechanisms and reserve audits.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Liquidity Section -->
+    <section id="liquidity" class="section" style="background: rgba(10, 15, 20, 0.6);">
+        <div class="container">
+            <h2 class="section-title">Liquidity Mechanism</h2>
+            <p class="section-subtitle">
+                Dual-layer liquidity system combining algorithmic stability with real asset backing.
+            </p>
+            
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="doc-title">Synthetic Liquidity</h3>
+                    <p>Algorithmic mechanisms maintain base liquidity of 850M USDT for price stability.</p>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>Automated price stabilization</li>
+                        <li>Market cap simulation</li>
+                        <li>Anti-volatility measures</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="doc-title">Real Liquidity</h3>
+                    <p>Actual assets can be added to enhance token value and stability.</p>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>Add real USDT or other assets</li>
+                        <li>Enhanced price stability</li>
+                        <li>Increased token value</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3 class="doc-title">Combined Value</h3>
+                    <p>The hybrid approach provides superior stability while enabling real value appreciation.</p>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>Base stability + real growth</li>
+                        <li>Risk mitigation</li>
+                        <li>Enhanced market confidence</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Group -->
+    <section id="research" class="section">
+        <div class="container">
+            <h2 class="section-title">Join the Research Group</h2>
+            <p class="section-subtitle">
+                Collaborate with researchers and developers exploring hybrid liquidity solutions.
+            </p>
+            
+            <div class="research-group">
+                <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Telegram Research Group</h3>
+                <p>Connect with the community to discuss hybrid liquidity models, algorithmic stabilization, and decentralized finance innovations.</p>
+                
+                <a href="https://t.me/bsc_research_group" class="telegram-btn">
+                    <i class="fab fa-telegram"></i> Join Telegram Group
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contract Details -->
+    <section id="contract" class="section" style="background: rgba(10, 15, 20, 0.6);">
+        <div class="container">
+            <h2 class="section-title">Contract Details</h2>
+            <p class="section-subtitle">
+                Technical specifications and blockchain information for the token contract.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3 class="feature-title">Blockchain Information</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Network</div>
+                        <div class="detail-value">Binance Smart Chain (BSC)</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Token Standard</div>
+                        <div class="detail-value">BEP-20</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Contract Address</div>
+                        <div class="detail-value">
+                            <a href="https://bscscan.com/address/0x6b1557a31aa645897ed8d1f9217b6d1f493dc890" class="contract-link" target="_blank">
+                                0x6b1557a31aa645897ed8d1f9217b6d1f493dc890
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3 class="feature-title">Token Specifications</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Token Name</div>
+                        <div class="detail-value">Tether USD</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Token Symbol</div>
+                        <div class="detail-value">USDT</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Decimals</div>
+                        <div class="detail-value">18</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Total Supply</div>
+                        <div class="detail-value">1,000,000,000 USDT</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Synthetic Liquidity</div>
+                        <div class="detail-value">850,000,000 USDT</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Real Liquidity</div>
+                        <div class="detail-value">Adjustable</div>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3 class="feature-title">Source Code & Verification</h3>
+                    <p>The contract source code is available in the GitHub repository for transparency and verification.</p>
+                    <a href="https://github.com/remember711/BSC-Tether-USD-Mirror-/tree/main/contracts" class="doc-link" style="margin-top: 20px;">
+                        View Contract Source <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="https://bscscan.com/address/0x6b1557a31aa645897ed8d1f9217b6d1f493dc890#code" class="doc-link" style="margin-top: 10px;">
+                        Verify on BscScan <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-title">BSC Tether Mirror</h3>
+                    <p>An advanced hybrid liquidity protocol on Binance Smart Chain.</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--gray);">
+                        Released under MIT License
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Navigation</h3>
+                    <div class="footer-links">
+                        <a href="#about" class="footer-link">About Project</a>
+                        <a href="#token" class="footer-link">Token Details</a>
+                        <a href="#liquidity" class="footer-link">Liquidity</a>
+                        <a href="#research" class="footer-link">Research Group</a>
+                        <a href="#contract" class="footer-link">Contract</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Resources</h3>
+                    <div class="footer-links">
+                        <a href="https://github.com/remember711/BSC-Tether-USD-Mirror-" class="footer-link" target="_blank">GitHub Repository</a>
+                        <a href="#" class="footer-link">Technical Paper</a>
+                        <a href="#" class="footer-link">Liquidity Guide</a>
+                        <a href="https://bscscan.com/token/0x6b1557a31aa645897ed8d1f9217b6d1f493dc890" class="footer-link" target="_blank">BscScan</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Community</h3>
+                    <div class="footer-links">
+                        <a href="https://t.me/bsc_research_group" class="footer-link" target="_blank">Telegram Group</a>
+                        <a href="#" class="footer-link">Research Forum</a>
+                        <a href="#" class="footer-link">Liquidity Portal</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 BSC Tether Mirror Research Project. Hybrid liquidity protocol combining synthetic mechanisms with real asset backing.</p>
+                <p style="margin-top: 10px;">Token value is maintained through algorithmic controls and adjustable real liquidity.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Animate elements on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.feature-card, .doc-card, .token-card').forEach(card => {
+            observer.observe(card);
+        });
+        
+        // Update real liquidity value (example)
+        function updateLiquidityDisplay() {
+            // In a real implementation, this would fetch data from blockchain
+            const realLiquidityElement = document.querySelector('.liquidity-info .liquidity-card:nth-child(2) .liquidity-value');
+            if (realLiquidityElement) {
+                // Simulate fetching real liquidity value
+                const simulatedLiquidity = (Math.random() * 500).toFixed(2) + 'M USDT';
+                realLiquidityElement.textContent = simulatedLiquidity;
+            }
+        }
+        
+        // Update on page load
+        document.addEventListener('DOMContentLoaded', updateLiquidityDisplay);
+        
+        // Update every 30 seconds
+        setInterval(updateLiquidityDisplay, 30000);
+    </script>
+</body>
+</html>
