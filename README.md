@@ -44,9 +44,6 @@ This repository contains the reference implementation of an experimental hybrid 
 
 ## Getting Started
 
-To explore the contract:
-
-1. Clone the repository:
 ```bash
 git clone https://github.com/remember711/BSC-Tether-USD-Mirror.git
 
