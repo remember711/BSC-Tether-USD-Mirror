@@ -36,13 +36,9 @@ This repository contains the reference implementation of an experimental hybrid 
 - Transparent contract operations
 
 ## Project Structure
-├── website/ # Project website files
-├── docs/ # Documentation and research papers
-├── README.md # This overview file
-└── LICENSE # MIT License
-
 
 Documentation
+
 Price Mechanism - Algorithmic stabilization details
 
 Research Disclaimer - Legal information
