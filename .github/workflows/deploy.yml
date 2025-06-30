@@ -13,6 +13,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: 'website/'  # Указываем вашу папку
+          path: 'website/index.html' 
       - name: Deploy
         uses: actions/deploy-pages@v3
