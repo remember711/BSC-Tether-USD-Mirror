@@ -44,9 +44,6 @@ This repository contains the reference implementation of an experimental hybrid 
 
 ## Getting Started
 
-```bash
-git clone https://github.com/remember711/BSC-Tether-USD-Mirror.git
-
 Documentation
 Price Mechanism - Algorithmic stabilization details
 
@@ -67,4 +64,3 @@ This experimental prototype is released under the MIT License.
 - Real-time liquidity adjustment
 - Transparent contract operations
 
-## Project Structure
