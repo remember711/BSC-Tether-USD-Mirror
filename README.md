@@ -36,4 +36,28 @@ This repository contains information about an experimental hybrid liquidity prot
 - Transparent contract operations
 
 ## Project Structure
+├── website/ # Project website files
+├── docs/ # Documentation and research papers
+├── README.md # This overview file
+└── LICENSE # MIT License
+
+
+## Documentation
+
+- [Price Mechanism](docs/PRICE_MECHANISM.md) - Algorithmic stabilization details
+- [Research Disclaimer](docs/DISCLAIMER.md) - Legal information
+- [Liquidity Guide](docs/LIQUIDITY_GUIDE.md) - Adding real liquidity
+
+## Research Group
+
+Join the discussion on Telegram:  
+[![Telegram Group](https://img.shields.io/badge/Telegram-Research_Group-blue.svg?logo=telegram)](https://t.me/bsc_research_group)
+
+## License
+
+This experimental prototype documentation is released under the [MIT License](LICENSE).
+
+
+
+
 
