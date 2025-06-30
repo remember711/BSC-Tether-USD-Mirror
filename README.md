@@ -36,3 +36,38 @@ This repository contains the reference implementation of an experimental hybrid 
 - Transparent contract operations
 
 ## Project Structure
+├── website/ # Project website files
+├── docs/ # Documentation and research papers
+├── README.md # This overview file
+└── LICENSE # MIT License
+
+
+## Getting Started
+
+To explore the contract:
+
+1. Clone the repository:
+```bash
+git clone https://github.com/remember711/BSC-Tether-USD-Mirror.git
+
+Documentation
+Price Mechanism - Algorithmic stabilization details
+
+Research Disclaimer - Legal information
+
+Liquidity Guide - Adding real liquidity
+
+Research Group
+Join the discussion on Telegram:
+https://img.shields.io/badge/Telegram-Research_Group-blue.svg?logo=telegram
+
+License
+This experimental prototype is released under the MIT License.
+
+
+- Dynamic price stabilization algorithm
+- Cross-chain asset representation
+- Real-time liquidity adjustment
+- Transparent contract operations
+
+## Project Structure
