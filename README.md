@@ -42,18 +42,12 @@ This repository contains the reference implementation of an experimental hybrid 
 └── LICENSE # MIT License
 
 
-## Getting Started
-
 Documentation
 Price Mechanism - Algorithmic stabilization details
 
 Research Disclaimer - Legal information
 
 Liquidity Guide - Adding real liquidity
-
-Research Group
-Join the discussion on Telegram:
-https://img.shields.io/badge/Telegram-Research_Group-blue.svg?logo=telegram
 
 License
 This experimental prototype is released under the MIT License.
